@@ -424,10 +424,11 @@ def _jellybean_constructor(tcomponents, **kwargs):
         part = kwargs.pop(component.code)
         if part:
             if issubclass(component.typeclass, NumericalUnitBase):
-                cpart = component.typeclass(part)
-                # TODO Fix precision issue for Numerical Unit Base
-                if cpart != component.typeclass(part):
-                    raise ValueError
+                if not isinstance(part, component.typeclass):
+                    cpart = component.typeclass(part)
+                    # TODO Fix precision issue for Numerical Unit Base
+                    if cpart != component.typeclass(part):
+                        raise ValueError
             elif not isinstance(part, component.typeclass):
                 part = component.typeclass(part)
             rparts.append(str(part))
