@@ -23,7 +23,7 @@ test_requirements = [
 
 setup(
     name='tendril-conventions-electronics',
-    version='0.1.3',
+    version='0.1.4',
     description="Tendril Electronics Conventions",
     long_description=readme,
     author="Chintalagiri Shashank",

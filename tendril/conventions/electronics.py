@@ -285,6 +285,9 @@ def parse_ident(ident, generic=False):
 jb_component = namedtuple('jb_component',
                           'code typeclass required get_default criteria')
 
+jb_tools = namedtuple('jb_tools',
+                      'tclass defs pack parse construct match bestmatch')
+
 
 def jellybean_match(tcomponents, p1, p2):
     score = 0
@@ -472,6 +475,11 @@ def construct_resistor(resistance, wattage=None, tolerance=None, tc=None):
                                  tolerance=tolerance, tc=tc)
 
 
+resistor_tools = jb_tools(Resistor, jb_resistor_defs,
+                          jb_resistor, parse_resistor, construct_resistor,
+                          match_resistor, bestmatch_resistor)
+
+
 _c_parts = [jb_component('capacitance', Capacitance, True, None, 'EQUAL'),
             jb_component('voltage', Voltage, False, None, 'ATLEAST'),
             jb_component('tolerance', Tolerance, False, None, 'ATMOST'),
@@ -507,6 +515,11 @@ def construct_capacitor(capacitance, voltage=None, tolerance=None, tcc=None):
     return jellybean_constructor(jb_capacitor_defs(),
                                  capacitance=capacitance, voltage=voltage,
                                  tolerance=tolerance, tcc=tcc)
+
+
+capacitor_tools = jb_tools(Capacitor, jb_capacitor_defs,
+                           jb_capacitor, parse_capacitor, construct_capacitor,
+                           match_capacitor, bestmatch_capacitor)
 
 
 def parse_inductor(value):
@@ -588,3 +601,13 @@ def check_for_jb_component(device, value, footprint):
     if vals is not None:
         return prefix
     return False
+
+
+def jb_tools_for_ident(ident):
+    prefix = check_for_std_val(ident)
+    if not prefix:
+        return
+    if prefix == 'RES':
+        return resistor_tools
+    if prefix == 'CAP':
+        return capacitor_tools
