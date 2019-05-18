@@ -286,7 +286,7 @@ jb_component = namedtuple('jb_component',
                           'code typeclass required get_default criteria')
 
 
-def _jellybean_match(tcomponents, p1, p2):
+def jellybean_match(tcomponents, p1, p2):
     score = 0
     for component in tcomponents:
         p1v = getattr(p1, component.code)
@@ -321,7 +321,7 @@ def _jellybean_match(tcomponents, p1, p2):
     return score
 
 
-def _jellybean_bestmatch(tcomponents, target, candidates):
+def jellybean_bestmatch(tcomponents, target, candidates):
     if len(candidates) == 1:
         return candidates[0][0]
     candidates = [c[0] for c in candidates]
@@ -344,7 +344,7 @@ def _jellybean_bestmatch(tcomponents, target, candidates):
     return candidates[0][0]
 
 
-def _jellybean_packer(ttype, tcomponents, tcontext, **kwargs):
+def jellybean_packer(ttype, tcomponents, tcontext, **kwargs):
     """
     Pack components for a jellybean part into a structured form. Also applies
     defaults when needed and supported at this stage.
@@ -371,7 +371,7 @@ def _jellybean_packer(ttype, tcomponents, tcontext, **kwargs):
     return ttype(**kwargs)
 
 
-def _jellybean_parser(ttype, tcomponents, tcontext, value):
+def jellybean_parser(ttype, tcomponents, tcontext, value):
     """
     Parses the standard form of the value for a jellybean part. Returns the 
     components in a structured form, constructed by _jellybean_packer where 
@@ -407,10 +407,10 @@ def _jellybean_parser(ttype, tcomponents, tcontext, value):
             else:
                 rparts[component.code] = None
 
-    return _jellybean_packer(ttype, tcomponents, tcontext, **rparts)
+    return jellybean_packer(ttype, tcomponents, tcontext, **rparts)
 
 
-def _jellybean_constructor(tcomponents, **kwargs):
+def jellybean_constructor(tcomponents, **kwargs):
     """
     Construct a valid value string from components for jellybean parts. The  
     provided structured forms can be provided directly as kwargs.
@@ -449,27 +449,27 @@ def jb_resistor_defs():
 
 def jb_resistor(resistance, wattage=None, tolerance=None, tc=None,
                 context=None):
-    return _jellybean_packer(Resistor, jb_resistor_defs(), tcontext=context,
-                             resistance=resistance, wattage=wattage,
-                             tolerance=tolerance, tc=tc)
+    return jellybean_packer(Resistor, jb_resistor_defs(), tcontext=context,
+                            resistance=resistance, wattage=wattage,
+                            tolerance=tolerance, tc=tc)
 
 
 def match_resistor(tresistor, sresistor):
-    return _jellybean_match(jb_resistor_defs(), tresistor, sresistor)
+    return jellybean_match(jb_resistor_defs(), tresistor, sresistor)
 
 
 def bestmatch_resistor(tresistor, candidates):
-    return _jellybean_bestmatch(jb_resistor_defs(), tresistor, candidates)
+    return jellybean_bestmatch(jb_resistor_defs(), tresistor, candidates)
 
 
 def parse_resistor(value, context=None):
-    return _jellybean_parser(Resistor, jb_resistor_defs(), context, value)
+    return jellybean_parser(Resistor, jb_resistor_defs(), context, value)
 
 
 def construct_resistor(resistance, wattage=None, tolerance=None, tc=None):
-    return _jellybean_constructor(jb_resistor_defs(),
-                                  resistance=resistance, wattage=wattage,
-                                  tolerance=tolerance, tc=tc)
+    return jellybean_constructor(jb_resistor_defs(),
+                                 resistance=resistance, wattage=wattage,
+                                 tolerance=tolerance, tc=tc)
 
 
 _c_parts = [jb_component('capacitance', Capacitance, True, None, 'EQUAL'),
@@ -486,27 +486,27 @@ def jb_capacitor_defs():
 
 def jb_capacitor(capacitance,
                  voltage=None, tolerance=None, tcc=None, context=None):
-    return _jellybean_packer(Capacitor, jb_capacitor_defs(), tcontext=context,
-                             capacitance=capacitance, voltage=voltage,
-                             tolerance=tolerance, tcc=tcc)
+    return jellybean_packer(Capacitor, jb_capacitor_defs(), tcontext=context,
+                            capacitance=capacitance, voltage=voltage,
+                            tolerance=tolerance, tcc=tcc)
 
 
 def match_capacitor(tcapacitor, scapacitor):
-    return _jellybean_match(jb_capacitor_defs(), tcapacitor, scapacitor)
+    return jellybean_match(jb_capacitor_defs(), tcapacitor, scapacitor)
 
 
 def bestmatch_capacitor(tcapacitor, candidates):
-    return _jellybean_bestmatch(jb_capacitor_defs(), tcapacitor, candidates)
+    return jellybean_bestmatch(jb_capacitor_defs(), tcapacitor, candidates)
 
 
 def parse_capacitor(value, context=None):
-    return _jellybean_parser(Capacitor, jb_capacitor_defs(), context, value)
+    return jellybean_parser(Capacitor, jb_capacitor_defs(), context, value)
 
 
 def construct_capacitor(capacitance, voltage=None, tolerance=None, tcc=None):
-    return _jellybean_constructor(jb_capacitor_defs(),
-                                  capacitance=capacitance, voltage=voltage,
-                                  tolerance=tolerance, tcc=tcc)
+    return jellybean_constructor(jb_capacitor_defs(),
+                                 capacitance=capacitance, voltage=voltage,
+                                 tolerance=tolerance, tcc=tcc)
 
 
 def parse_inductor(value):
